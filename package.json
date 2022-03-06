@@ -1,0 +1,62 @@
+{
+  "name": "udacity-storefront-api",
+  "version": "1.0.0",
+  "description": "E-Commerce api project for udacity fullstack nanodegree",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf ./build & tsc",
+    "tsc": "tsc",
+    "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./build --onSuccess 'node ./build/server.js'",
+    "test": "ENV=test db-migrate --env test up && jasmine-ts && db-migrate db:jasmine-ts",
+    "test-build": "npm run build && npm run jasmine",
+    "dev": "nodemon build/main.js",
+    "jasmine": "jasmine",
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint . --ext .ts --fix",
+    "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts --write",
+    "start:dev": "nodemon",
+    "migrate": "db-migrate --env test up && db-migrate up"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrBomber0x001/Udacity-Storefront-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrBomber0x001/Udacity-Storefront-api/issues"
+  },
+  "homepage": "https://github.com/MrBomber0x001/Udacity-Storefront-api#readme",
+  "dependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/node": "^17.0.21",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "db-migrate-pg": "^1.2.2",
+    "express": "^4.17.3",
+    "http-errors": "^2.0.0",
+    "jasmine": "^4.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.3",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/http-errors": "^1.8.2",
+    "@types/jasmine": "^3.10.3",
+    "@types/morgan": "^1.9.3",
+    "@types/pg": "^8.6.4",
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
+    "eslint": "^8.9.0",
+    "jasmine-spec-reporter": "^7.0.0",
+    "morgan": "^1.10.0",
+    "tsc-watch": "^4.6.0"
+  }
+}
