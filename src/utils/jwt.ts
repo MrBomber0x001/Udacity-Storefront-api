@@ -7,7 +7,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
     next();
     } catch(error){
-        return res.status(401);
+        return next(error);
     } 
 }
 export const signToken = (userId: number): string => {

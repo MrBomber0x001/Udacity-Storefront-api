@@ -1,4 +1,4 @@
-import Client from "../config/db";
+import {Client} from "../config/db";
 
 export class Dashboard{
     async getMostExpensiveProducts(): Promise<{name: string, price: number, order_id: string}[]>{
@@ -12,10 +12,6 @@ export class Dashboard{
             throw new Error(`cannot get products ${e}`);
         }
     }
-    /**
-     * @params void
-     * @returns list of products on orders
-     */
     async productsInOrder(): Promise<{name: string, price: number, order_id: string}[]>{
         try{
             const conn = await Client.connect();

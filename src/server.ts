@@ -1,4 +1,4 @@
-import express, {Request, Response} from 'express';
+import express, {ErrorRequestHandler, Request, Response, NextFunction} from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import orderRoutes from './handlers/orders';
@@ -6,20 +6,16 @@ import productRoutes from './handlers/products';
 import userRoutes from './handlers/users';
 import dashboardRoutes from './handlers/dashboard';
 import morgan from 'morgan';
-import path from 'path';
-
-
+import helmet from 'helmet';
+import orderProducts from './handlers/orderProducts';
 /* Configuration */
-const app: express.Application = express();
 dotenv.config();
-const PORT = process.env.APP_PORT || 8000;
+const app: express.Application = express();
+const PORT = process.env.APP_PORT || 3000;
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
-app.use(express.static(__dirname + 'public'));
 app.use(morgan('short'));
-app.set('view engine', 'ejs');
-app.set('views', path.resolve(__dirname + "views"));
-
 
 /* Routes */
 app.get('/home', (req: Request, res: Response) => {
@@ -28,10 +24,18 @@ app.get('/home', (req: Request, res: Response) => {
 orderRoutes(app);
 productRoutes(app);
 userRoutes(app);
+orderProducts(app);
 dashboardRoutes(app);
 
+
+/** Error Middleware */
+app.use((err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
+    console.log(err);
+    res.send(err);
+})
 /* initiating server */
 
 app.listen(PORT, () => {
     console.log("Server is running")
 })
+export default app;

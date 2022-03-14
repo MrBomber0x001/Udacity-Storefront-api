@@ -3,12 +3,12 @@ import express, {Request, Response} from 'express';
 import {verifyToken} from '../utils/jwt';
 const store = new ProductStore();
 
-const index = async (req: Request, res: Response) => {
+const index = async (_req: Request, res: Response) => {
     const products = await store.index();
     res.send(products);
 }
 const show = async (req: Request, res: Response) => {
-    const product = await store.show(req.params.id);
+    const product = await store.show(parseInt(req.params.id));
     res.send(product);
 }
 const createProduct = async (req: Request, res: Response) => {
@@ -25,18 +25,31 @@ const createProduct = async (req: Request, res: Response) => {
     }
 }
 const destroy = async(req: Request, res: Response) => {
-    await store.delete(req.params.id);
-    res.send("Deleted");
+    const deletedProduct = await store.delete(parseInt(req.params.id));
+    res.send(deletedProduct);
+}
+const updateProduct = async (req: Request, res: Response) => {
+    //! create allowed updates
+    const product: Product = {
+        id: req.body.id,
+        name: req.body.name,
+        price: req.body.price,
+        category: req.body.category
+    }
+    const updatedProduct = await store.update(product);
+    res.send(updatedProduct);
 }
 const getByCategory = async (req: Request, res: Response) => {
     const products = await store.getByCategory(req.params.category);
     return res.send(products);
 }
 const mount = (app: express.Application) => {
-    app.get('/products', index);
-    app.get('/products/:id', show);
-    app.post('/products/create', verifyToken, createProduct);
-    app.delete('/products/:id', destroy);
-    app.get('/products/cat/:category', getByCategory);
+    app.get('/products/:category', verifyToken,getByCategory); // done
+    app.get('/products', verifyToken, verifyToken, index); // done
+    app.get('/products/:id', verifyToken, show); // done
+    app.post('/products/create', verifyToken, createProduct); // done
+    app.delete('/products/:id',verifyToken,  destroy); // done
+    app.put('/products', verifyToken, updateProduct);  // done
+    
 }
 export default mount;

@@ -1,10 +1,10 @@
-import Client from '../config/db';
+import {Client} from '../config/db';
 
 export type Product = {
     id?: number;
     name: string;
     price: number;
-    category?: string;
+    category: string;
 }
 
 
@@ -20,7 +20,7 @@ export class ProductStore {
             throw new Error(`Unable to get products`);
         }
     }
-    async show(id: string): Promise<Product> {
+    async show(id: number): Promise<Product> {
         try {
             const sql = 'select * from products where id=($1)';
             const conn = await Client.connect();
@@ -51,18 +51,30 @@ export class ProductStore {
             conn.release();
             return result.rows;
         } catch (error) {
-            throw new Error(`Unable to get Product`);
+            throw new Error(`${error}`);
         }
     }
-    async delete(id: string): Promise<Product> {
+    async delete(id: number): Promise<Product> {
         try {
-            const sql = 'delete from products where id=($1)';
+            const sql = 'delete from products where id=($1) RETURNING *';
             const conn = await Client.connect();
             const result = await conn.query(sql, [id]);
             conn.release();
             return result.rows[0];
         } catch (error) {
             throw new Error(`Unable to delete product`)
+        }
+    }
+    async update(p: Product): Promise<Product>{
+        try {
+            const {name, category, price, id} = p;
+           const conn = await Client.connect();
+           const sql = 'UPDATE products SET name=$1, price=$2, category=$3 WHERE id=$4 RETURNING *';
+           const result = await conn.query(sql, [name, price, category, id]); 
+           conn.release();
+           return result.rows[0];
+        } catch (error) {
+            throw new Error(`Unable to update Product`)
         }
     }
 }

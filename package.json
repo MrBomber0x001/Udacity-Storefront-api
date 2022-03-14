@@ -6,23 +6,22 @@
   "scripts": {
     "build": "rimraf ./build & tsc",
     "tsc": "tsc",
-    "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./build --onSuccess 'node ./build/server.js'",
-    "test": "ENV=test db-migrate --env test up && jasmine-ts && db-migrate db:jasmine-ts",
-    "test-build": "npm run build && npm run jasmine",
+    "test": "ENV=test  && db-migrate up --config ./database.json -e test && tsc && yarn jasmine && db-migrate reset",
+    "build-test": "npm run build && npm run jasmine",
     "dev": "nodemon build/main.js",
+    "start:dev": "nodemon",
     "jasmine": "jasmine",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
     "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts --write",
-    "start:dev": "nodemon",
     "migrate": "db-migrate --env test up && db-migrate up"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MrBomber0x001/Udacity-Storefront-api.git"
   },
-  "author": "",
+  "author": "Yousef Meska",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MrBomber0x001/Udacity-Storefront-api/issues"
@@ -38,20 +37,27 @@
     "cors": "^2.8.5",
     "db-migrate-pg": "^1.2.2",
     "express": "^4.17.3",
+    "helmet": "^5.0.2",
     "http-errors": "^2.0.0",
     "jasmine": "^4.0.2",
     "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.4",
     "pg": "^8.7.3",
     "rimraf": "^3.0.2",
+    "supertest": "^6.2.2",
     "ts-node": "^10.5.0",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
     "@types/http-errors": "^1.8.2",
     "@types/jasmine": "^3.10.3",
     "@types/morgan": "^1.9.3",
+    "@types/multer": "^1.4.7",
     "@types/pg": "^8.6.4",
+    "@types/supertest": "^2.0.11",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
     "eslint": "^8.9.0",

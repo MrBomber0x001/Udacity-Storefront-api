@@ -1,11 +1,11 @@
-import Client from '../config/db';
-
+import {Client} from '../config/db';
+import { Order_Products } from './Order_Products';
 export type Order = {
-    id?: string;
+    id?: number;
     status?: string;
-    product_id: number,
     user_id: number,
-    quantity: number
+    username?: string
+    products?: Order_Products[];
 }
 
 export class OrderStore {
@@ -20,7 +20,7 @@ export class OrderStore {
             throw new Error(`Unable to get list of Orders`);
         }
     }
-    async show(id: string): Promise<Order>{
+    async show(id: number): Promise<Order>{
         try {
             const sql = 'SELECT * FROM orders where id=($1)';
             const conn = await Client.connect();
@@ -31,23 +31,50 @@ export class OrderStore {
             throw new Error(`Unable to get order`);
         }
     }
+
+    async showDetailed(id: number): Promise<Order> {
+        try {
+          const sql =
+            "SELECT o.id AS id, u.firstname, o.user_id, JSON_AGG(JSONB_BUILD_OBJECT('productId', p.id, 'name', p.name, 'category', p.category, 'price', p.price, 'quantity', op.quantity)) AS products,  o.status AS status FROM orders AS o LEFT JOIN order_products AS op ON o.id = op.order_id LEFT JOIN products AS p ON op.product_id = p.id LEFT JOIN users AS u ON u.id = o.user_id WHERE o.id =($1) GROUP BY o.id, u.firstname, o.status, o.user_id";
+    
+          const conn= await Client.connect();
+    
+          const result = await conn.query(sql, [id]);
+    
+          conn.release();
+          return result.rows[0];
+        } catch (err) {
+            throw new Error(`Unable to get Order for ${id}`)
+        }
+      }
+      async indexDetailed(): Promise<Order[]> {
+        try {
+          const conn = await Client.connect();
+
+          const sql =
+          "SELECT o.id AS id, u.firstname, o.user_id, JSON_AGG(JSONB_BUILD_OBJECT('productId', p.id, 'name', p.name, 'category', p.category, 'price', p.price, 'quantity', op.quantity)) AS products,  o.status AS status FROM orders AS o LEFT JOIN order_products AS op ON o.id = op.order_id LEFT JOIN products AS p ON op.product_id = p.id LEFT JOIN users AS u ON u.id = o.user_id GROUP BY o.id, u.firstname, o.status, o.user_id";
+          const result = await conn.query(sql);
+          conn.release();
+          return result.rows;
+        } catch (err) {
+          throw new Error(`Unable to get orders`);
+        }
+      }
     async create(o: Order): Promise<Order>{
         try {
-            const {product_id, quantity, user_id, status} = o;
-            console.log("hit");
-            const sql = 'INSERT INTO orders (product_id, user_id, quantity, status) VALUES ($1, $2, $3, $4) RETURNING *';
+            const {user_id, status} = o;
+            const sql = 'INSERT INTO orders (user_id, status) VALUES ($1, $2) RETURNING *';
             const conn = await Client.connect();
-            const result = await conn.query(sql, [product_id, user_id, quantity, status]);
+            const result = await conn.query(sql, [user_id, status]);
             conn.release();
-            console.log("hit 2");
             return result.rows[0];
         } catch (error) {
             throw new Error(`Cannot create Order`);
         }
     }
-    async delete(id: string): Promise<Order>{
+    async delete(id: number): Promise<Order>{
         try {
-            const sql = 'DELETE FROM orders WHERE id=($1)';
+            const sql = 'DELETE FROM orders WHERE id=($1) RETURNING *';
             const conn = await Client.connect();
             const result = await conn.query(sql, [id]);
             conn.release();
@@ -110,6 +137,49 @@ export class OrderStore {
             throw new Error(`Could not add product ${productId} to order: ${orderId}`);
         }
     }
+    async getAllOrdersrByUserId(userId: number): Promise<Order[]> {
+        try {
+          const sql =
+            "SELECT o.id AS id, u.firstname, o.user_id, JSON_AGG(JSONB_BUILD_OBJECT('productId', p.id, 'name', p.name,'category', p.category, 'price', p.price, 'quantity', op.quantity)) AS products, o.status AS status FROM orders AS o LEFT JOIN order_products AS op ON o.id = op.order_id LEFT JOIN products AS p ON op.product_id = p.id LEFT JOIN users AS u ON u.id = o.user_id WHERE o.user_id = $1 GROUP BY o.id, u.firstname, o.status, o.user_id";
+    
+          const conn = await Client.connect();
+          const result = await conn.query(sql, [userId]);
+    
+          conn.release()
+          return result.rows;
+        } catch (err) {
+          throw new Error(`Unable to get order for user: ${userId}`)
+        }
+      }
+      async getDetailedOpenedOrders(userId: number): Promise<Order[]>{
+        try {
+            const sql =
+              "SELECT o.id AS id, u.firstname, o.user_id, JSON_AGG(JSONB_BUILD_OBJECT('productId', p.id, 'name', p.name,'category', p.category, 'price', p.price, 'quantity', op.quantity)) AS products, o.status AS status FROM orders AS o LEFT JOIN order_products AS op ON o.id = op.order_id LEFT JOIN products AS p ON op.product_id = p.id LEFT JOIN users AS u ON u.id = o.user_id WHERE o.user_id = $1 AND status='open' GROUP BY o.id, u.firstname, o.status, o.user_id";
+      
+            const conn = await Client.connect();
+            const result = await conn.query(sql, [userId]);
+      
+            conn.release()
+            return result.rows;
+          } catch (err) {
+            throw new Error(`Unable to get order for user: ${userId}`)
+          }
+      }
+      async getDetailedClosedOrders(userId: number): Promise<Order[]>{
+        try {
+            const sql =
+              "SELECT o.id AS id, u.firstname, o.user_id, JSON_AGG(JSONB_BUILD_OBJECT('productId', p.id, 'name', p.name,'category', p.category, 'price', p.price, 'quantity', op.quantity)) AS products, o.status AS status FROM orders AS o LEFT JOIN order_products AS op ON o.id = op.order_id LEFT JOIN products AS p ON op.product_id = p.id LEFT JOIN users AS u ON u.id = o.user_id WHERE o.user_id = $1 AND status='closed' GROUP BY o.id, u.firstname, o.status, o.user_id";
+      
+            const conn = await Client.connect();
+            const result = await conn.query(sql, [userId]);
+      
+            conn.release()
+            return result.rows;
+          } catch (err) {
+            throw new Error(`Unable to get order for user: ${userId}`)
+          }
+      }
+    
     async updateOrder(status: string | undefined, orderId: number): Promise<Order>{
         try {
             const conn = await Client.connect();

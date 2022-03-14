@@ -1,6 +1,7 @@
 import express, {Request, Response} from 'express';
 import {Order, OrderStore} from '../models/Order';
 import { verifyToken } from '../utils/jwt';
+//! Handle try and catch for each route
 const store = new OrderStore();
 const index = async (req: Request, res: Response) => {
     const orders = await store.index();
@@ -8,9 +9,7 @@ const index = async (req: Request, res: Response) => {
 }
 const create = async (req: Request, res: Response) => {
     const order: Order = {
-          product_id: req.body.product_id,
           user_id: req.body.user_id,
-          quantity: parseInt(req.body.quantity),
           status: req.body.status  
     };
     try{
@@ -22,10 +21,11 @@ const create = async (req: Request, res: Response) => {
 
 }
 const show = async (req: Request, res: Response) => {
-    const order = await store.show(req.params.id);
-    if(!order){
-        return res.json({msg: "There is no orders"})
-    }
+    const order = await store.show(parseInt(req.params.id));
+    res.json(order);
+}
+const showDetailed = async (req: Request, res: Response) => {
+    const order = await store.showDetailed(parseInt(req.params.id));
     res.json(order);
 }
 const getCurrentOrders = async (req: Request, res: Response) => {
@@ -56,7 +56,7 @@ const addProduct = async (req: Request, res: Response) => {
     }
 }
 const deleteOne = async (req: Request, res: Response) => {
-    const deleted = await store.delete(req.params.id);
+    const deleted = await store.delete(parseInt(req.params.id));
     return res.json(deleted);
 }
 const update = async (req: Request, res: Response) => {
@@ -64,15 +64,37 @@ const update = async (req: Request, res: Response) => {
     const updatedOrder = await store.updateOrder(status, parseInt(req.params.id));
     res.json(updatedOrder);
 }
+const indexDetailed = async (req: Request, res: Response) => {
+    const orders = await store.indexDetailed();
+    res.json(orders);
+}
+const getAllOrders = async (req: Request, res: Response) => {
+    const orders = await store.getAllOrdersrByUserId(parseInt(req.params.userId));
+    res.json(orders);
+}
+const getDetailedOpenedOrders = async (req: Request, res: Response) => {
+    const openedOrders = await store.getDetailedOpenedOrders(parseInt(req.params.userId));
+    res.json(openedOrders);
+}
+const getDetailedClosedOrders = async (req: Request, res: Response) => {
+    const closedOrders = await store.getDetailedClosedOrders(parseInt(req.params.userId));
+    res.json(closedOrders);
+}
 const orderRoutes = (app: express.Application) => {
     app.get('/orders', verifyToken, index); // done
-    app.get('/orders/:id', verifyToken,show); // done
-    app.get('/orders/current/:userId', verifyToken,getCurrentOrders); // done
-    app.get('/orders/open/:userId', verifyToken,getOpenedOrders); // done
-    app.get('/orders/closed/:userId', verifyToken,getClosedOrders) // done
-    app.post('/orders/:id/products', verifyToken,addProduct);
-    app.post('/orders/create', create); // done
-    app.delete('/orders/:id', verifyToken, deleteOne); // done
-    app.put('/orders/:id', update); // done
+    app.get('/orders/indexDetailed', verifyToken, indexDetailed) // done
+    app.get('/orders/:id',verifyToken, show);  //done
+    app.get('/orders/users/current/:userId',verifyToken, getCurrentOrders); // done
+    app.get('/orders/show-detailed/:id', verifyToken, showDetailed); // done
+    app.delete('/orders/:id', verifyToken,deleteOne); // done
+    app.get('/orders/users/open/:userId', verifyToken,getOpenedOrders);  //done
+    app.get('/orders/users/open/detailed/:userId', verifyToken,getDetailedOpenedOrders); // done
+    app.get('/orders/users/closed/:userId', verifyToken, getClosedOrders) // done
+    app.get('/orders/users/:userId', verifyToken, getAllOrders); // done
+    app.get('/orders/users/closed/detailed/:userId', verifyToken,getDetailedClosedOrders); // done
+    app.post('/orders/create', verifyToken, create); // done
+
+    app.put('/orders/:id', update); 
+
 }
 export default orderRoutes;
