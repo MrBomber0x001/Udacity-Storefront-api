@@ -187,16 +187,16 @@ npm install
 
 1. **creating user**
  
-```bash
+```sh
 CREATE USER shop_user WITH PASSWORD 'password123';
 ```
 2. **create both development and testing db**
-```bash
+```sh
 CREATE DATABASE shop;
 CREATE DATABASE shop_test;
 ```
 3. **grant all privileges on both databases**
-```bash
+```sh
 \c shop;
 GRANT ALL PRIVILEGES ON DATABASE shop To shop_user;
 \c shop_test 
@@ -204,7 +204,7 @@ GRANT ALL PRIVILEGES ON DATABASE shop_test To shop_user;
 ```
 
 - setting enviroment variables
-```bash
+```sh
 touch .env
 nano .env
 
@@ -233,45 +233,45 @@ the server runs <a href="http://localhost:3000">localhost</a>
 
 **Running**
 - testing db
-```bash
+```sh
 db-migrate up -e test
 ```
 - development db
-```bash
+```sh
 db-migrate up -e dev
 ```
 or simply run
-```bash
+```sh
 npm run migrate
 ```
 
 **Rollingback**
-```bash
+```sh
 db-migrate down
 ```
 
 ## Running application
 - to run on compiled files
-```bash
+```sh
 npm run dev
 ```
 - to run on typescript files
-```bash
+```sh
 npm run start:dev
 ```
 ## Running Tests
 
 To run tests, you need only two steps
 1. Export ENV to test
-```bash
+```sh
 export ENV=test
 ```
 2. Run testing command, which will build the project and run the tests, this step is so important because `jasmine` tests the compiled js code
-```bash
+```sh
 npm run build-test
 ```
 
 or simple run 
-```bash
+```sh
 npm run test
 ```
