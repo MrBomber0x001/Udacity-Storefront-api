@@ -185,11 +185,18 @@ npm install
 
 ## Setup and Connect to database
 
-- creating the database
+1. **creating user**
+ 
 ```bash
 CREATE USER shop_user WITH PASSWORD 'password123';
+```
+2. **create both development and testing db**
+```bash
 CREATE DATABASE shop;
 CREATE DATABASE shop_test;
+```
+3. **grant all privileges on both databases**
+```bash
 \c shop;
 GRANT ALL PRIVILEGES ON DATABASE shop To shop_user;
 \c shop_test 
