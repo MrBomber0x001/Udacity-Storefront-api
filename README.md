@@ -3,7 +3,48 @@ a# Udacity-Storefront-api
 E-Commerce api project for udacity fullstack web nanodegree 
 
 ## Project Structure
-## API Endpoints
+```
+src                      
+├─ config                
+│  └─ db.ts              
+├─ handlers              
+│  ├─ dashboard.ts       
+│  ├─ home.ts            
+│  ├─ orderProducts.ts   
+│  ├─ orders.ts          
+│  ├─ products.ts        
+│  └─ users.ts           
+├─ middlewares           
+│  └─ Error.ts           
+├─ models                
+│  ├─ Order.ts           
+│  ├─ Order_Products.ts  
+│  ├─ Product.ts         
+│  └─ User.ts            
+├─ services              
+│  └─ Dashboard.ts       
+├─ tests                 
+│  ├─ helpers            
+│  │  └─ reporter.ts     
+│  ├─ models             
+│  │  ├─ orderSpec.ts    
+│  │  ├─ productSpec.ts  
+│  │  └─ userSpec.ts     
+│  └─ routes             
+│     ├─ orderSpec.ts    
+│     ├─ productSpec.ts  
+│     └─ userSpec.ts     
+├─ uploads               
+│  ├─ categories         
+│  ├─ products           
+│  └─ profiles           
+├─ utils                 
+│  ├─ jwt.ts             
+│  └─ multer.ts          
+└─ server.ts             
+```
+
+## API Endpoints & Database Schema
 
 Head over to [REQUIREMENTS](./REQUIREMENTS.md)
 ## Installing
