@@ -104,8 +104,7 @@ dist
 .tern-port
 
 notes.txt
-
-*.sql
+db.sql
 REQUIREMENTS.md
 build
 *.txt
