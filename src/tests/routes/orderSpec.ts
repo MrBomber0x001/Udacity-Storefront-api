@@ -37,6 +37,10 @@ describe('Testing Order CRUD API', () => {
             user_id: response.body.user_id
         })
     })
+    it('should returns 200 ok returning current order', async () => {
+        const response = await request.get('/orders/users/current/1').set('Content-Type', 'application/json').set('Authorization', `Bearer ${token1}`);
+        expect(response.status).toBe(200);
+    })
     it('should delete order', async() => {
         const response = await request.delete('/orders/1').set('Content-Type', 'application/json').set('Authorization', `Bearer ${token1}`);
         expect(response.status).toBe(200);

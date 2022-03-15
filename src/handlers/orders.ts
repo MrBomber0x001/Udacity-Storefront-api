@@ -56,43 +56,69 @@ const addProduct = async (req: Request, res: Response) => {
     }
 }
 const deleteOne = async (req: Request, res: Response) => {
-    const deleted = await store.delete(parseInt(req.params.id));
-    return res.json(deleted);
+    try{
+        const deleted = await store.delete(parseInt(req.params.id));
+        return res.json(deleted);
+    } catch(e){
+        res.status(400).send(`${e}`);
+    }
 }
 const update = async (req: Request, res: Response) => {
+try{
     const status: string | undefined = req.query.status as string;
     const updatedOrder = await store.updateOrder(status, parseInt(req.params.id));
     res.json(updatedOrder);
+} catch(e){
+    res.status(400).send(`${e}`);
+}
 }
 const indexDetailed = async (req: Request, res: Response) => {
-    const orders = await store.indexDetailed();
-    res.json(orders);
+    try{
+        const orders = await store.indexDetailed();
+        res.json(orders);
+    } catch(e){
+        res.status(400).send(`${e}`);
+    }
+
 }
 const getAllOrders = async (req: Request, res: Response) => {
-    const orders = await store.getAllOrdersrByUserId(parseInt(req.params.userId));
-    res.json(orders);
+    try{
+        const orders = await store.getAllOrdersrByUserId(parseInt(req.params.userId));
+        res.json(orders);
+    } catch(e){
+        res.status(400).send(`${e}`);
+    }
+
 }
 const getDetailedOpenedOrders = async (req: Request, res: Response) => {
-    const openedOrders = await store.getDetailedOpenedOrders(parseInt(req.params.userId));
-    res.json(openedOrders);
+    try {
+        const openedOrders = await store.getDetailedOpenedOrders(parseInt(req.params.userId));
+        res.json(openedOrders);
+    } catch (error) {
+        res.status(400).send(`${error}`);
+    }
 }
 const getDetailedClosedOrders = async (req: Request, res: Response) => {
-    const closedOrders = await store.getDetailedClosedOrders(parseInt(req.params.userId));
-    res.json(closedOrders);
+    try {
+        const closedOrders = await store.getDetailedClosedOrders(parseInt(req.params.userId));
+        res.json(closedOrders);
+    } catch (error) {
+        res.status(400).send(`${error}`);
+    }
 }
 const orderRoutes = (app: express.Application) => {
-    app.get('/orders', verifyToken, index); // done
-    app.get('/orders/indexDetailed', verifyToken, indexDetailed) // done
-    app.get('/orders/:id',verifyToken, show);  //done
-    app.get('/orders/users/current/:userId',verifyToken, getCurrentOrders); // done
-    app.get('/orders/show-detailed/:id', verifyToken, showDetailed); // done
-    app.delete('/orders/:id', verifyToken,deleteOne); // done
-    app.get('/orders/users/open/:userId', verifyToken,getOpenedOrders);  //done
-    app.get('/orders/users/open/detailed/:userId', verifyToken,getDetailedOpenedOrders); // done
-    app.get('/orders/users/closed/:userId', verifyToken, getClosedOrders) // done
-    app.get('/orders/users/:userId', verifyToken, getAllOrders); // done
-    app.get('/orders/users/closed/detailed/:userId', verifyToken,getDetailedClosedOrders); // done
-    app.post('/orders/create', verifyToken, create); // done
+    app.get('/orders', verifyToken, index); 
+    app.get('/orders/indexDetailed', verifyToken, indexDetailed) 
+    app.get('/orders/:id',verifyToken, show); 
+    app.get('/orders/users/current/:userId',verifyToken, getCurrentOrders);
+    app.get('/orders/show-detailed/:id', verifyToken, showDetailed); 
+    app.delete('/orders/:id', verifyToken,deleteOne); 
+    app.get('/orders/users/open/:userId', verifyToken,getOpenedOrders);  
+    app.get('/orders/users/open/detailed/:userId', verifyToken,getDetailedOpenedOrders); 
+    app.get('/orders/users/closed/:userId', verifyToken, getClosedOrders) 
+    app.get('/orders/users/:userId', verifyToken, getAllOrders);
+    app.get('/orders/users/closed/detailed/:userId', verifyToken,getDetailedClosedOrders); 
+    app.post('/orders/create', verifyToken, create);
 
     app.put('/orders/:id', update); 
 

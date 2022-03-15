@@ -3,13 +3,22 @@ import { Order_Products, Order_Products_Store } from "../models/Order_Products";
 import { verifyToken } from "../utils/jwt";
 const store=  new Order_Products_Store();
 const index = async (req: Request, res: Response) => {
-    const productsOnOrder = await store.index(parseInt(req.params.orderId));
-    res.json(productsOnOrder)    
+    try{
+        const productsOnOrder = await store.index(parseInt(req.params.orderId));
+        res.json(productsOnOrder)   
+    } catch(e){
+        res.status(400).send(`${e}`);
+    }
+ 
 }
 
 const remove = async (req: Request, res: Response) => {
-    const removed = await store.delete(parseInt(req.params.orderId), parseInt(req.params.productId));
-    res.send(removed);
+    try{
+        const removed = await store.delete(parseInt(req.params.orderId), parseInt(req.params.productId));
+        res.send(removed);
+    } catch (e){
+        res.status(400).send(`${e}`);
+    }
 }
 const update = async (req: Request, res: Response) => {
 try {
@@ -25,8 +34,13 @@ try {
 }
 }
 const show = async (req: Request, res: Response) => {
-    const productsInOrder = await store.show(parseInt(req.params.orderId), parseInt(req.params.productId));
-    res.send(productsInOrder);
+    try{
+        const productsInOrder = await store.show(parseInt(req.params.orderId), parseInt(req.params.productId));
+        res.send(productsInOrder);
+    } catch(e){
+        res.send(`${e}`);
+    }
+
 }
 const mount = (app: express.Application) => {
     app.get('/order-products/:orderId/products/:productId', verifyToken,show);

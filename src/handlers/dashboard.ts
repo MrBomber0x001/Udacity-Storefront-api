@@ -11,18 +11,32 @@ const dashboard = new Dashboard();
 
 
 const getMostExpensiveProducts = async(req: Request, res: Response) => {
-    const products = await dashboard.getMostExpensiveProducts();
-    res.json();
+    try{
+        const products = await dashboard.getMostExpensiveProducts();
+        res.json(products);
+    } catch(e){
+        res.status(400).send(`${e}`);
+    }
+
 }
 
 const usersWithOrders = async(req: Request, res: Response) => {
-    const users = await dashboard.usersWithOrders();
-    res.json(users);
+    try{
+        const users = await dashboard.usersWithOrders();
+        res.json(users);
+    } catch(e){
+        res.status(400).send(`${e}`);
+    }
 }
 
 const productsInOrders = async(req: Request, res: Response) => {
-    const products = await dashboard.productsInOrder();
-    res.json(products);
+    try{
+        const products = await dashboard.productsInOrder();
+        res.json(products);
+    } catch (e){
+        res.status(400).send(`${e}`);
+    }
 }
 
 export default dashboardRoutes;
+

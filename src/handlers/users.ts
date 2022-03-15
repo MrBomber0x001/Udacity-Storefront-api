@@ -36,8 +36,13 @@ const show = async(req: Request, res: Response) => {
 }
 
 const destroy = async(req: Request, res: Response) => {
-    const deletedUser = await store.delete(parseInt(req.params.id));
-    res.send(deletedUser);
+    try{
+        const deletedUser = await store.delete(parseInt(req.params.id));
+        res.send(deletedUser);
+    } catch(e){
+        res.status(400).send(`${e}`);
+    }
+
 }
 
 const authenticate = async(req: Request, res: Response) => {
@@ -79,8 +84,12 @@ const updateUser = async (req: Request, res: Response) => {
         email: req.body.email,
         id: req.body.id
     }
-    const updatedUser = await store.update(user);
-    return res.send(updatedUser);
+    try {
+        const updatedUser = await store.update(user);
+        return res.send(updatedUser);
+    } catch (error) {
+        res.status(400).send(`${error}`);
+    }
 }
 const logout = async (req: Request, res: Response) => {
     //TODO: delete token

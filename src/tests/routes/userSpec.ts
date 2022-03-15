@@ -30,6 +30,13 @@ describe("Testing User API", () => {
         expect(response.status).toBe(200);
         token = response.body.token;
     })
+    it('should return 200 ok showing list of users', async () => {
+        const response = await request.get('/users').set('Content-Type', 'application/json').set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(200);
+    })
+    it('should return 200 ok for showing one user', async () => {
+        const reponse = await request.get('/users/1').set('Content-Type', 'application/json').set('Authorization', `Bearer ${token}`)
+    })
     it('should delete a user', async() => {
         const response = await request.delete('/users/1').set('Content-Type', 'application/json').set('Authorization', `Bearer ${token}`);
         expect(response.status).toBe(200);

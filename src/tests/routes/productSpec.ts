@@ -36,6 +36,14 @@ describe('Product API', () => {
         expect(response.status).toBe(200);
         expect(response.body.id).toBe(1);
     })
+    it('should returns 200 ok showing one product', async () => {
+        const response = await request.get('/products').set('Content-Type', 'application/json').set(`Authorization`, `Bearer ${token1}`);
+        expect(response.status).toBe(200);
+    })
+    it('should returns a 200 ok showing list of products', async () => {
+        const response = await request.get('/products/1').set('Content-Type', 'application/json').set(`Authorization`, `Bearer ${token1}`)
+        expect(response.status).toBe(200);
+    })
     it('should delete a product', async () => {
         const response = await request.delete('/products/1').set(`Content-Type`, 'application/json').set(`Authorization`, `Bearer ${token1}`)
         expect(response.status).toBe(200);
